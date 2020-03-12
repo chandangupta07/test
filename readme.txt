@@ -1,5 +1,5 @@
 /* set database and jwt setting in api_test/,env file 
-/* got ditectory ai_test in terminal and command node db_table.js
+/* got ditectory api_test in terminal and command node db_table.js
 /* port 4000 bin/www setup your port 
 /* post request 
 base_utl/users/signin  post data -> username,password
