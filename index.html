@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<title></title>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3" style="float: left;">
+            <ul>
+                <a href="index.html"><li class="active">Feeds</li><br></a>
+                <a href="follower.html"><li class="active">Followers</li></a><br>
+                <a href="followings.html"><li class="active">Followings</li><br></a>
+                <a href="follow.html"><li class="active">Follow Users</li></a>
+            </ul>
+        </div>
+        
+        <div class="" style="align-content: center;">
+        <p id="tweet_error"></p>
+        <h1>Post Tweet</h1>
+        <form id="tweet_from" method="POST" >
+            <ul>
+                <p>
+                    <input type="text" name="tag" id="tag" placeholder="Tag" />
+                </p>
+                <p>
+                    <textarea name="post_text" id="post_text" cols="40" rows="20">
+
+                    </textarea>
+                </p>
+                
+                    <input type="submit" class="btn btn-md btn-primary"  style="align-content: center; align-self: center;" value="Post" class="button" />
+                
+            </ul>
+        </form>
+        </div>
+        <div class="col-md-9 ml-10" style="margin-left: 10px;" id="get_data">
+            
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+    checkUser();
+    $(function() {
+        getAllTweets();
+    });
+
+    function getAllTweets(){
+        let authToen = getToken();
+        $.ajax({
+            type : 'GET',
+            url  :  API_URL+'users',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer '+authToen);
+            },
+            dataType : 'json'
+        })
+        .done(function(data){
+            if(data.errors){
+                $("#get_data").html(data.errors);
+            }else{
+                let dataHtnl = "";
+                $.each(data.data,function(key,val){
+                    dataHtnl  += '<div class="col-md-9">'+
+                                    '<h1>'+val.username+'</h1>'+
+                                      '<p>'+val.tweet+'</p>'+
+                                      '<p>'+val.tag+'</p>'+
+                                      '<span class="">Posted '+val.timestamp+'</span></div>';
+                })
+                $("#get_data").html(dataHtnl);
+            }
+        })
+    }
+
+    $(document).on('submit','#tweet_from',function(event){
+        event.preventDefault();
+        let authToken = getToken();
+        var tweet_data = $(this).serializeArray();
+        $.ajax({
+            type : 'POST',
+            url  :  API_URL+'users/create-post',
+            data :  tweet_data,
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Bearer '+authToken);
+            },
+            dataType : 'json'
+        })
+        .done(function(data){
+            if(data.errors){
+                $("#get_error").html(data.errors);
+            }else{
+                getAllTweets();
+            }
+        })
+        
+    })
+</script>
